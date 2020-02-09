@@ -34,12 +34,14 @@ namespace TiffToRawRGB
                 for (int x = 0; x < width; ++x)
                 {
                     int pos = (y * width) + x;
-                    int stride = 6;
 
-                    // 2byte ずつコピー
+                    int srcStride = 6;
+                    int destStride = 2;
+
+                    // copy 2bytes each
                     for (int d = 0; d < 2; ++d)
                     {
-                        dest[pos + d] = src[(pos * stride) + d];
+                        dest[pos * destStride + d] = src[(pos * srcStride) + d];
                     }
 
                 }
@@ -56,7 +58,6 @@ namespace TiffToRawRGB
         /// <param name="output"></param>
         static int Convert(String input, String output, PixelFormat pixelFormat)
         {
-
             try
             {
                 using (var stream = new FileStream(input, FileMode.Open))
@@ -82,7 +83,7 @@ namespace TiffToRawRGB
 
                         img.CopyPixels(data, stride, 0);
 
-                        // Change a rgb to r.
+                        // Change rgb to r.
                         if(pixelFormat == PixelFormat.R16)
                         {
                             var newData = new byte[img.PixelWidth * img.PixelHeight * 2];
@@ -121,7 +122,7 @@ namespace TiffToRawRGB
             {
                 Console.WriteLine("[ERROR] Invalid args.");
                 Console.WriteLine("        TiffToRawRGB.exe -i <input> -o <output>");
-                Console.WriteLine("        option -f R16");
+                Console.WriteLine("        option -f R16 or RGB16");
                 return 1;
             }
 
